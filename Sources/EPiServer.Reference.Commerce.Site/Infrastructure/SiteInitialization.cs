@@ -29,6 +29,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.WebPages;
 using EPiServer.Personalization.Common;
+using EPiServer.Personalization.Commerce.Tracking;
 
 namespace EPiServer.Reference.Commerce.Site.Infrastructure
 {
@@ -48,6 +49,8 @@ namespace EPiServer.Reference.Commerce.Site.Infrastructure
             });
 
             AreaRegistration.RegisterAllAreas();
+
+            context.Locate.Advanced.GetInstance<OrderEventListener>().AddEvents();
 
 #if DISABLE_PROMOTION_TYPES_FEATURE
             DisablePromotionTypes(context);
@@ -69,6 +72,8 @@ namespace EPiServer.Reference.Commerce.Site.Infrastructure
             services.AddSingleton<IRecommendationContext, RecommendationContext>();
 
             services.AddSingleton<ICurrentMarket, CurrentMarket>();
+
+            services.AddSingleton<ITrackingResponseDataInterceptor, TrackingResponseDataInterceptor>();
 
             //Register for auto injection of edit mode check, should be default life cycle (per request to service locator)
             services.AddTransient<IsInEditModeAccessor>(locator => () => PageEditing.PageIsInEditMode);
@@ -101,7 +106,10 @@ namespace EPiServer.Reference.Commerce.Site.Infrastructure
 #endif
         }
 
-        public void Uninitialize(InitializationEngine context) { }
+        public void Uninitialize(InitializationEngine context)
+        {
+            context.Locate.Advanced.GetInstance<OrderEventListener>().RemoveEvents();
+        }
 
         /// <summary>
         /// Enables the IRI characters in Urls.
