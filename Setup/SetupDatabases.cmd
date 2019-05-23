@@ -4,7 +4,7 @@
 set cms_db=Quicksilver.Cms
 set commerce_db=Quicksilver.Commerce
 set user=Quicksilver
-set password=Episerver15
+set password=Episerver15@789543738HH
 
 :: Determine package folders
 for /F " tokens=*" %%i in ('dir "..\Packages\EPiServer.CMS.Core*" /b /o:d') do (set cms_core=%%i) 
@@ -19,7 +19,7 @@ if "%commerce_core%"=="" (
 	exit /b
 )
 
-set sql=sqlcmd -S . -E
+set sql=sqlcmd -S .\SQLExpress -E
 
 echo Dropping databases...
 %sql% -Q "EXEC msdb.dbo.sp_delete_database_backuphistory N'%cms_db%'"
